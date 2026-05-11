@@ -10,7 +10,9 @@ const handleBeforeRequest = (request, z, bundle) => {
   if (request.url.includes('api.wistia.com')) {
     const token = bundle.authData.api_token || process.env.WISTIA_TOKEN;
     if (token) {
-      request.headers.Authorization = `Bearer ${token}`;
+      // Wistia uses HTTP Basic auth with the API token as the username and an empty password
+      const basic = Buffer.from(`${token}:`).toString('base64');
+      request.headers.Authorization = `Basic ${basic}`;
     }
   }
   return request;
